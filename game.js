@@ -6,7 +6,7 @@ let player = {
     y: canvas.height - 50, // プレイヤーの高さを考慮  
     width: 50,  
     height: 50,  
-    speed: 10 // プレイヤーの速度  
+    speed: 5 // プレイヤーの速度  
 };  
 
 let lasers = [];  
@@ -38,8 +38,9 @@ function shootLaser() {
     lasers.push(laser);  
 }  
 
-// レーザーと敵の衝突判定  
-function checkLaserCollision() {  
+// 衝突判定  
+function checkCollision() {  
+    // レーザーと敵の衝突判定  
     for (let i = lasers.length - 1; i >= 0; i--) {  
         for (let j = enemies.length - 1; j >= 0; j--) {  
             if (              
@@ -55,10 +56,8 @@ function checkLaserCollision() {
             }  
         }  
     }  
-}  
 
-// プレイヤーと敵の衝突判定  
-function checkPlayerCollision() {  
+    // プレイヤーと敵の衝突判定  
     for (let enemy of enemies) {  
         if (  
             player.x < enemy.x + enemy.width &&  
@@ -66,7 +65,7 @@ function checkPlayerCollision() {
             player.y < enemy.y + enemy.height &&  
             player.y + player.height > enemy.y  
         ) {  
-            gameOver = true; // 衝突が検出されたらゲームオーバー  
+            gameOver = true; // 衝突があった場合はゲームオーバー  
             break;  
         }  
     }  
@@ -88,8 +87,7 @@ function update() {
     lasers = lasers.filter(laser => laser.y > 0);  
     enemies = enemies.filter(enemy => enemy.y < canvas.height);  
     
-    checkLaserCollision();  
-    checkPlayerCollision(); // プレイヤーの衝突チェック  
+    checkCollision();  
 }  
 
 // 描画  
@@ -156,6 +154,7 @@ document.addEventListener('keydown', (event) => {
         if (player.y + player.height > canvas.height) player.y = canvas.height - player.height; // 画面外に出ないように  
     }  
 });  
+
 
 // 敵の生成を定期的に行う  
 setInterval(createEnemy, 1000);  
