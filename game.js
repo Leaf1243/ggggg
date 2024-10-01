@@ -6,12 +6,13 @@ let player = {
     y: canvas.height - 50, // プレイヤーの高さを考慮  
     width: 50,  
     height: 50,  
-    speed: 5 // プレイヤーの速度  
+    speed: 10 // プレイヤーの速度  
 };  
 
 let lasers = [];  
 let enemies = [];  
 let score = 0;  
+let gameOver = false; // ゲームオーバーの状態を管理  
 
 // 敵の生成  
 function createEnemy() {  
@@ -38,7 +39,7 @@ function shootLaser() {
 }  
 
 // レーザーと敵の衝突判定  
-function checkCollision() {  
+function checkLaserCollision() {  
     for (let i = lasers.length - 1; i >= 0; i--) {  
         for (let j = enemies.length - 1; j >= 0; j--) {  
             if (              
@@ -56,8 +57,25 @@ function checkCollision() {
     }  
 }  
 
+// プレイヤーと敵の衝突判定  
+function checkPlayerCollision() {  
+    for (let enemy of enemies) {  
+        if (  
+            player.x < enemy.x + enemy.width &&  
+            player.x + player.width > enemy.x &&  
+            player.y < enemy.y + enemy.height &&  
+            player.y + player.height > enemy.y  
+        ) {  
+            gameOver = true; // 衝突が検出されたらゲームオーバー  
+            break;  
+        }  
+    }  
+}  
+
 // ゲームの更新  
 function update() {  
+    if (gameOver) return; // ゲームオーバーの場合は更新しない  
+
     lasers.forEach(laser => {  
         laser.y -= laser.speed;  
     });  
@@ -70,7 +88,8 @@ function update() {
     lasers = lasers.filter(laser => laser.y > 0);  
     enemies = enemies.filter(enemy => enemy.y < canvas.height);  
     
-    checkCollision();  
+    checkLaserCollision();  
+    checkPlayerCollision(); // プレイヤーの衝突チェック  
 }  
 
 // 描画  
@@ -97,6 +116,13 @@ function draw() {
     ctx.fillStyle = 'black';  
     ctx.font = '20px Arial';  
     ctx.fillText(`スコア: ${score}`, 10, 20);  
+
+    // ゲームオーバー表示  
+    if (gameOver) {  
+        ctx.fillStyle = 'red';  
+        ctx.font = '40px Arial';  
+        ctx.fillText('ゲームオーバー', canvas.width / 2 - 100, canvas.height / 2);  
+    }  
 }  
 
 // ゲームループ  
@@ -111,6 +137,8 @@ document.addEventListener('keydown', (event) => {
     if (event.code === 'Space') {  
         shootLaser();  
     }  
+    if (gameOver) return; // ゲームオーバーの場合は操作を無視  
+
     if (event.code === 'ArrowLeft' || event.code === 'KeyA') {  
         player.x -= player.speed; // 左移動  
         if (player.x < 0) player.x = 0; // 画面外に出ないように  
@@ -133,4 +161,4 @@ document.addEventListener('keydown', (event) => {
 setInterval(createEnemy, 1000);  
 
 // ゲームスタート  
-gameLoop();  
+gameLoop();
