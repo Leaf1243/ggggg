@@ -6,7 +6,7 @@ let player = {
     y: canvas.height - 50, // プレイヤーの高さを考慮  
     width: 50,  
     height: 50,  
-    speed: 5 // プレイヤーの速度  
+    speed: 20 // プレイヤーの速度  
 };  
 
 let lasers = [];  
