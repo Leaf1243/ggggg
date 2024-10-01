@@ -2,10 +2,11 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');  
 
 let player = {  
-    x: canvas.width / 2,  
-    y: canvas.height - 30,  
+    x: canvas.width / 2 - 25, // プレイヤーをキャンバスの中央に配置  
+    y: canvas.height - 50, // プレイヤーの高さを考慮  
     width: 50,  
     height: 50,  
+    speed: 5 // プレイヤーの速度  
 };  
 
 let lasers = [];  
@@ -40,7 +41,7 @@ function shootLaser() {
 function checkCollision() {  
     for (let i = lasers.length - 1; i >= 0; i--) {  
         for (let j = enemies.length - 1; j >= 0; j--) {  
-            if (  
+            if (              
                 lasers[i].x < enemies[j].x + enemies[j].width &&  
                 lasers[i].x + lasers[i].width > enemies[j].x &&  
                 lasers[i].y < enemies[j].y + enemies[j].height &&  
@@ -109,6 +110,22 @@ function gameLoop() {
 document.addEventListener('keydown', (event) => {  
     if (event.code === 'Space') {  
         shootLaser();  
+    }  
+    if (event.code === 'ArrowLeft' || event.code === 'KeyA') {  
+        player.x -= player.speed; // 左移動  
+        if (player.x < 0) player.x = 0; // 画面外に出ないように  
+    }  
+    if (event.code === 'ArrowRight' || event.code === 'KeyD') {  
+        player.x += player.speed; // 右移動  
+        if (player.x + player.width > canvas.width) player.x = canvas.width - player.width; // 画面外に出ないように  
+    }  
+    if (event.code === 'ArrowUp' || event.code === 'KeyW') {  
+        player.y -= player.speed; // 上移動  
+        if (player.y < 0) player.y = 0; // 画面外に出ないように  
+    }  
+    if (event.code === 'ArrowDown' || event.code === 'KeyS') {  
+        player.y += player.speed; // 下移動  
+        if (player.y + player.height > canvas.height) player.y = canvas.height - player.height; // 画面外に出ないように  
     }  
 });  
 
