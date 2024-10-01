@@ -6,13 +6,15 @@ let player = {
     y: canvas.height - 50, // プレイヤーの高さを考慮  
     width: 50,  
     height: 50,  
-    speed: 20 // プレイヤーの速度  
+    speed: 25 // プレイヤーの速度  
 };  
 
 let lasers = [];  
 let enemies = [];  
 let score = 0;  
 let gameOver = false; // ゲームオーバーの状態を管理  
+let hitCount = 0; // 敵に当たったレーザーのカウント  
+let lastHitTime = Date.now(); // 最後のヒット時間  
 
 // 敵の生成  
 function createEnemy() {  
@@ -52,6 +54,8 @@ function checkCollision() {
                 lasers.splice(i, 1);  
                 enemies.splice(j, 1);  
                 score++;  
+                hitCount++; // 当たったカウントを増やす  
+                lastHitTime = Date.now(); // 最後のヒット時間を更新  
                 break;  
             }  
         }  
@@ -88,6 +92,11 @@ function update() {
     enemies = enemies.filter(enemy => enemy.y < canvas.height);  
     
     checkCollision();  
+
+    // 15秒ごとに敵に当たったレーザーの確認  
+    if (Date.now() - lastHitTime > 15000) { // 最後のヒットから15秒経過  
+        gameOver = true; // ゲームオーバー  
+    }  
 }  
 
 // 描画  
@@ -155,9 +164,8 @@ document.addEventListener('keydown', (event) => {
     }  
 });  
 
-
 // 敵の生成を定期的に行う  
-setInterval(createEnemy, 1000);  
+setInterval(createEnemy,
 
 // ゲームスタート  
 gameLoop();
